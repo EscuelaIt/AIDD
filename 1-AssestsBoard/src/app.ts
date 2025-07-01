@@ -1,10 +1,15 @@
+/// <reference types="node" />
 import express from 'express';
+import { portfolioRoutes } from './routes/portfolio.routes.ts';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
+
+// Rutas
+app.use('/portfolios', portfolioRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

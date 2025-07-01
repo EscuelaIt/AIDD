@@ -1,1 +1,7 @@
-[] 
+[
+  {
+    "email": "user@acme.com",
+    "cash": 1000,
+    "id": "fc070554-9e8f-456a-9ef4-c8e5d65a7105"
+  }
+]
