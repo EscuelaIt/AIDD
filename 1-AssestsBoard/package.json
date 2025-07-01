@@ -1,0 +1,29 @@
+{
+  "name": "assets-board-api",
+  "version": "1.0.0",
+  "description": "Assets Board API with Express 5 and TypeScript",
+  "main": "src/app.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/app.ts",
+    "start": "node src/app.ts"
+  },
+  "dependencies": {
+    "express": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "keywords": [
+    "express",
+    "typescript",
+    "api",
+    "portfolio",
+    "assets"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.0.8"
+  }
+}
