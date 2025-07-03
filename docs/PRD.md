@@ -9,7 +9,7 @@
 - Crear nuevos portfolios con email del usuario y cash inicial
 
 - [1_gestion_portfolios#1](https://github.com/EscuelaIt/AIDD/issues/1)
-- draft
+- definido
 
 ### 2 Operaciones de Trading
 
