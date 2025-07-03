@@ -64,4 +64,6 @@ C4Context
 
 ## Referencias de contexto
 
+- **Modelo de Dominio**: [DOMAIN.md](./DOMAIN.md) - Entidades, atributos y relaciones del sistema
+
 <!-- Esta sección se actualizará en otras fases del desarrollo -->
