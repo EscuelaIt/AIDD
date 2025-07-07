@@ -1,0 +1,88 @@
+# API Coding Patterns
+
+## Controller Pattern
+Controllers should:
+- Handle HTTP requests and responses
+- Extract and validate input data
+- Call business logic functions
+- Return structured JSON responses
+- Include request metadata when relevant
+
+**Example from [health.controller.ts](mdc:src/api/routes/health.controller.ts):**
+```typescript
+export function healthController(req: Request, res: Response) {
+  const data = healthLogic();
+  res.json({
+    data,
+    request: {
+      method: req.method,
+      url: req.originalUrl,
+      host: req.hostname,
+      port: req.socket.localPort,
+    },
+  });
+}
+```
+
+## Logic Pattern
+Logic functions should:
+- Contain pure business logic
+- Orchestrate operations between repositories
+- Return structured data objects
+- Handle business rules and validations
+- Be testable and reusable
+
+**Example from [health.logic.ts](mdc:src/api/routes/health.logic.ts):**
+```typescript
+export function healthLogic() {
+  const message = healthRepository();
+  return {
+    message,
+    timestamp: new Date().toISOString(),
+  };
+}
+```
+
+## Repository Pattern
+Repositories should:
+- Handle data access and external integrations
+- Return primitive data or simple objects
+- Be the only layer that knows about data sources
+- Handle data transformation if needed
+
+**Example from [health.repository.ts](mdc:src/api/routes/health.repository.ts):**
+```typescript
+export function healthRepository() {
+  return "Everything is OK";
+}
+```
+
+## Response Structure
+All API responses should follow this structure:
+```typescript
+{
+  data: any,           // Main response data
+  request?: {          // Optional request metadata
+    method: string,
+    url: string,
+    host: string,
+    port: number
+  }
+}
+```
+
+## Error Handling
+- Use try-catch blocks in controllers for unexpected errors
+- Return appropriate HTTP status codes
+- Provide meaningful error messages
+- Log errors appropriately
+
+## Middleware Usage
+- Use [log.middleware.ts](mdc:src/api/middleware/log.middleware.ts) for request logging
+- Leverage [request.utils.ts](mdc:src/api/shared/request.utils.ts) for common operations
+- Add new middleware in the `middleware/` directory
+- Register middleware in [api.bootstrap.ts](mdc:src/api/api.bootstrap.ts)
+description:
+globs:
+alwaysApply: false
+---

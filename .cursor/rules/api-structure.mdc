@@ -1,0 +1,57 @@
+# API Structure Guide
+
+## Architecture Overview
+The API follows a **layered architecture** pattern with clear separation of concerns:
+
+- **Controllers**: Handle HTTP requests/responses and input validation
+- **Logic**: Contains business logic and orchestrates operations
+- **Repositories**: Handle data access and external integrations
+- **Middleware**: Cross-cutting concerns like logging, auth, etc.
+- **Shared**: Common utilities and types
+
+## File Organization
+
+### Main API Files
+- [api.bootstrap.ts](mdc:src/api/api.bootstrap.ts) - Server initialization and configuration
+- [api.routes.ts](mdc:src/api/api.routes.ts) - Route registration and middleware setup
+
+### Route Structure
+Each route follows the pattern: `{route-name}.{layer}.ts`
+- [health.controller.ts](mdc:src/api/routes/health.controller.ts) - Request/response handling
+- [health.logic.ts](mdc:src/api/routes/health.logic.ts) - Business logic
+- [health.repository.ts](mdc:src/api/routes/health.repository.ts) - Data access
+
+### Middleware
+- [log.middleware.ts](mdc:src/api/middleware/log.middleware.ts) - Request logging
+
+### Shared Utilities
+- [request.utils.ts](mdc:src/api/shared/request.utils.ts) - Common request helpers
+
+## Creating New Routes
+
+### 1. Create Route Files
+Create three files in `src/api/routes/`:
+- `{route-name}.controller.ts` - HTTP handling
+- `{route-name}.logic.ts` - Business logic  
+- `{route-name}.repository.ts` - Data access
+
+### 2. Follow Naming Conventions
+- Use kebab-case for file names
+- Use camelCase for function names
+- Export functions with descriptive names
+
+### 3. Register Routes
+Add your controller to [api.routes.ts](mdc:src/api/api.routes.ts) following the pattern:
+```typescript
+app.use("/{route-path}", {routeName}Controller);
+```
+
+## Architecture Principles
+- **Single Responsibility**: Each layer has one clear purpose
+- **Dependency Direction**: Controllers → Logic → Repository
+- **Separation of Concerns**: HTTP, business logic, and data access are separate
+- **Reusability**: Shared utilities for common operations
+description:
+globs:
+alwaysApply: false
+---

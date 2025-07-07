@@ -1,0 +1,152 @@
+# API Route Templates
+
+## Quick Start Templates
+
+### 1. Controller Template
+```typescript
+import type { Request, Response } from "express";
+import { {routeName}Logic } from "./{route-name}.logic.ts";
+
+export function {routeName}Controller(req: Request, res: Response) {
+  try {
+    // Extract and validate input
+    const { param1, param2 } = req.params;
+    const { query1, query2 } = req.query;
+    const body = req.body;
+
+    // Call business logic
+    const data = {routeName}Logic({ param1, param2, query1, query2, body });
+
+    // Return response
+    res.json({
+      data,
+      request: {
+        method: req.method,
+        url: req.originalUrl,
+        host: req.hostname,
+        port: req.socket.localPort,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Internal server error",
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+}
+```
+
+### 2. Logic Template
+```typescript
+import { {routeName}Repository } from "./{route-name}.repository.ts";
+
+export function {routeName}Logic(params: {
+  param1?: string;
+  param2?: string;
+  query1?: string;
+  query2?: string;
+  body?: any;
+}) {
+  // Business logic validation
+  if (!params.param1) {
+    throw new Error("param1 is required");
+  }
+
+  // Call repository
+  const result = {routeName}Repository(params);
+
+  // Transform and return data
+  return {
+    result,
+    timestamp: new Date().toISOString(),
+    processed: true,
+  };
+}
+```
+
+### 3. Repository Template
+```typescript
+export function {routeName}Repository(params: {
+  param1?: string;
+  param2?: string;
+  query1?: string;
+  query2?: string;
+  body?: any;
+}) {
+  // Data access logic
+  // Database queries, external API calls, etc.
+  
+  return {
+    id: "generated-id",
+    data: "processed data",
+    source: "repository",
+  };
+}
+```
+
+### 4. Route Registration Template
+Add to [api.routes.ts](mdc:src/api/api.routes.ts):
+```typescript
+import { {routeName}Controller } from "./routes/{route-name}.controller.ts";
+
+export function useApiRoutes(app: Application) {
+  app.use("/health", healthController);
+  app.use("/{route-path}", {routeName}Controller); // Add this line
+}
+```
+
+## HTTP Method Templates
+
+### GET Endpoint
+```typescript
+export function get{Resource}Controller(req: Request, res: Response) {
+  const { id } = req.params;
+  const data = get{Resource}Logic({ id });
+  res.json({ data });
+}
+```
+
+### POST Endpoint
+```typescript
+export function create{Resource}Controller(req: Request, res: Response) {
+  const body = req.body;
+  const data = create{Resource}Logic({ body });
+  res.status(201).json({ data });
+}
+```
+
+### PUT Endpoint
+```typescript
+export function update{Resource}Controller(req: Request, res: Response) {
+  const { id } = req.params;
+  const body = req.body;
+  const data = update{Resource}Logic({ id, body });
+  res.json({ data });
+}
+```
+
+### DELETE Endpoint
+```typescript
+export function delete{Resource}Controller(req: Request, res: Response) {
+  const { id } = req.params;
+  const data = delete{Resource}Logic({ id });
+  res.status(204).send();
+}
+```
+
+## File Naming Convention
+- Controllers: `{resource-name}.controller.ts`
+- Logic: `{resource-name}.logic.ts`
+- Repository: `{resource-name}.repository.ts`
+- Route path: `/api/{resource-name}`
+
+## Usage Instructions
+1. Copy the appropriate template
+2. Replace `{routeName}`, `{route-name}`, `{route-path}`, `{Resource}`, `{resource-name}` with your actual names
+3. Implement the specific business logic
+4. Register the route in [api.routes.ts](mdc:src/api/api.routes.ts)
+5. Test the endpoint
+description:
+globs:
+alwaysApply: false
+---

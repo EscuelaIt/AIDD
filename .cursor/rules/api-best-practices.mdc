@@ -1,0 +1,146 @@
+# API Best Practices
+
+## Clean Code Principles
+
+### Intentional Naming
+- Use descriptive names for all functions and variables
+- Controllers: `{resource}Controller` (e.g., `userController`, `productController`)
+- Logic: `{action}{Resource}Logic` (e.g., `getUserLogic`, `createProductLogic`)
+- Repositories: `{action}{Resource}Repository` (e.g., `findUserRepository`, `saveProductRepository`)
+- Files: kebab-case (e.g., `user-profile.controller.ts`)
+
+### Function Design
+- Keep functions small and focused on single responsibility
+- Use early returns for validation and error cases
+- Separate pure functions from side effects
+- Minimize parameters by using objects for complex data
+
+### Error Handling
+```typescript
+// Good: Early return with validation
+export function getUserLogic({ id }: { id: string }) {
+  if (!id) {
+    throw new Error("User ID is required");
+  }
+  
+  if (id.length < 3) {
+    throw new Error("User ID must be at least 3 characters");
+  }
+  
+  return getUserRepository({ id });
+}
+```
+
+## Architecture Guidelines
+
+### Dependency Direction
+- Controllers depend on Logic
+- Logic depends on Repository
+- Never reverse the dependency direction
+- Use dependency injection for external services
+
+### Data Flow
+```
+Request → Controller → Logic → Repository → Data Source
+Response ← Controller ← Logic ← Repository ← Data Source
+```
+
+### Response Consistency
+All API responses should follow the standard structure:
+```typescript
+{
+  data: any,                    // Main response data
+  request?: RequestMetadata,    // Optional request info
+  error?: string,              // Error message if applicable
+  message?: string             // Success/info message
+}
+```
+
+## Security Practices
+
+### Input Validation
+- Validate all inputs in controllers
+- Use type guards and validation libraries
+- Sanitize user inputs before processing
+- Return appropriate HTTP status codes
+
+### Error Information
+- Don't expose internal errors to clients
+- Log detailed errors for debugging
+- Return generic error messages to users
+- Use proper HTTP status codes
+
+## Performance Guidelines
+
+### Database Operations
+- Use repositories for all data access
+- Implement proper connection pooling
+- Use transactions for multi-step operations
+- Cache frequently accessed data
+
+### Response Optimization
+- Return only necessary data
+- Use pagination for large datasets
+- Implement proper HTTP caching headers
+- Compress responses when appropriate
+
+## Testing Strategy
+
+### Unit Testing
+- Test logic functions independently
+- Mock repository dependencies
+- Test error scenarios and edge cases
+- Use descriptive test names
+
+### Integration Testing
+- Test complete request-response cycles
+- Test with real database connections
+- Verify middleware behavior
+- Test error handling end-to-end
+
+## Documentation
+
+### Code Comments
+- Document complex business logic
+- Explain non-obvious decisions
+- Use JSDoc for public functions
+- Keep comments up-to-date
+
+### API Documentation
+- Document all endpoints with examples
+- Include request/response schemas
+- Document error scenarios
+- Provide usage examples
+
+## Middleware Guidelines
+
+### Order Matters
+1. Security middleware (CORS, rate limiting)
+2. Logging middleware
+3. Authentication/Authorization
+4. Request parsing
+5. Route handlers
+
+### Custom Middleware
+- Keep middleware focused and reusable
+- Use the [log.middleware.ts](mdc:src/api/middleware/log.middleware.ts) pattern
+- Handle errors appropriately
+- Don't block the request pipeline unnecessarily
+
+## Future Considerations
+
+### Scalability
+- Design for horizontal scaling
+- Use stateless architecture
+- Implement proper session management
+- Consider microservices for complex domains
+
+### Monitoring
+- Add health check endpoints
+- Implement proper logging
+- Use metrics for performance monitoring
+- Set up alerting for critical failures
+description:
+globs:
+alwaysApply: false
+---
