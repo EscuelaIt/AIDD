@@ -8,7 +8,7 @@ Controllers should:
 - Return structured JSON responses
 - Include request metadata when relevant
 
-**Example from [health.controller.ts](mdc:src/api/routes/health.controller.ts):**
+**Example from [health.controller.ts](mdc:src/api/routes/health/health.controller.ts):**
 ```typescript
 export function healthController(req: Request, res: Response) {
   const data = healthLogic();
@@ -32,7 +32,7 @@ Logic functions should:
 - Handle business rules and validations
 - Be testable and reusable
 
-**Example from [health.logic.ts](mdc:src/api/routes/health.logic.ts):**
+**Example from [health.logic.ts](mdc:src/api/routes/health/health.logic.ts):**
 ```typescript
 export function healthLogic() {
   const message = healthRepository();
@@ -50,7 +50,7 @@ Repositories should:
 - Be the only layer that knows about data sources
 - Handle data transformation if needed
 
-**Example from [health.repository.ts](mdc:src/api/routes/health.repository.ts):**
+**Example from [health.repository.ts](mdc:src/api/routes/health/health.repository.ts):**
 ```typescript
 export function healthRepository() {
   return "Everything is OK";

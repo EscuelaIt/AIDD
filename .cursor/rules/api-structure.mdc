@@ -16,10 +16,14 @@ The API follows a **layered architecture** pattern with clear separation of conc
 - [api.routes.ts](mdc:src/api/api.routes.ts) - Route registration and middleware setup
 
 ### Route Structure
-Each route follows the pattern: `{route-name}.{layer}.ts`
-- [health.controller.ts](mdc:src/api/routes/health.controller.ts) - Request/response handling
-- [health.logic.ts](mdc:src/api/routes/health.logic.ts) - Business logic
-- [health.repository.ts](mdc:src/api/routes/health.repository.ts) - Data access
+Each route has its own folder in `src/api/routes/{route-name}/` containing:
+- `{route-name}.controller.ts` - Request/response handling
+- `{route-name}.logic.ts` - Business logic
+- `{route-name}.repository.ts` - Data access
+
+**Current route folders:**
+- [health/](mdc:src/api/routes/health/) - Health check endpoints
+- [user/](mdc:src/api/routes/user/) - User management endpoints
 
 ### Middleware
 - [log.middleware.ts](mdc:src/api/middleware/log.middleware.ts) - Request logging
@@ -29,11 +33,19 @@ Each route follows the pattern: `{route-name}.{layer}.ts`
 
 ## Creating New Routes
 
-### 1. Create Route Files
-Create three files in `src/api/routes/`:
+### 1. Create Route Folder and Files
+Create a new folder `src/api/routes/{route-name}/` and add three files:
 - `{route-name}.controller.ts` - HTTP handling
 - `{route-name}.logic.ts` - Business logic  
 - `{route-name}.repository.ts` - Data access
+
+**Example structure for a new `portfolio` route:**
+```
+src/api/routes/portfolio/
+├── portfolio.controller.ts
+├── portfolio.logic.ts
+└── portfolio.repository.ts
+```
 
 ### 2. Follow Naming Conventions
 - Use kebab-case for file names
