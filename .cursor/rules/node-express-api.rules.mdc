@@ -1,0 +1,270 @@
+---
+globs: *.ts
+alwaysApply: true
+---
+
+# Node.js Express API Development Rules
+
+## TypeScript Configuration
+
+### Module System
+- Use ES modules (`import`/`export`) syntax, not CommonJS (`require`)
+- Always include the `.ts` extension in imports
+- Use `type` keyword for type-only imports
+
+**Example:**
+```typescript
+import { bootstrap } from "./api/api.bootstrap.ts";
+import type { ApiConfig } from "./api/api.bootstrap.ts";
+```
+
+### Type System
+- Always define explicit types for variables, parameters, and return values
+- Use `type` for custom data types, `interface` for object behavior
+- Prefer union types over `enum`
+- Use `unknown` for unknown values, `never` for impossible values
+- Avoid `any` except as last resort, don't use `null` except for external APIs
+
+### Naming Conventions
+- Variables, functions, methods: `camelCase`
+- Classes, interfaces, types: `PascalCase`
+- Constants: `UPPER_SNAKE_CASE`
+- Files: `kebab-case` with pattern `{intention}.{artifact}.ts`
+
+## Three-Layer Architecture
+
+### Layer Structure
+```
+Request → Controller → Logic → Repository → Data Source
+Response ← Controller ← Logic ← Repository ← Data Source
+```
+
+### Dependency Rules
+- Controllers depend on Logic
+- Logic depends on Repository
+- Never reverse dependency direction
+- One level of dependencies only (don't talk to strangers)
+
+### File Organization
+Each feature has its own folder in `src/api/routes/{feature}/`:
+- `{feature}.controller.ts` - HTTP request/response handling
+- `{feature}.logic.ts` - Business logic and orchestration
+- `{feature}.repository.ts` - Data access layer
+
+## Layer Patterns
+
+### Controller Pattern
+```typescript
+import type { Request, Response } from "express";
+import { {feature}Logic } from "./{feature}.logic.ts";
+
+export function {feature}Controller(req: Request, res: Response): void {
+  try {
+    // Extract and validate input
+    const { id } = req.params;
+    const queryParams = req.query;
+    const bodyData = req.body;
+
+    // Call business logic
+    const data = {feature}Logic({ id, queryParams, bodyData });
+
+    // Return structured response
+    res.json({
+      data,
+      request: {
+        method: req.method,
+        url: req.originalUrl,
+        host: req.hostname,
+        port: req.socket.localPort,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Internal server error",
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+}
+```
+
+### Logic Pattern
+```typescript
+import { {feature}Repository } from "./{feature}.repository.ts";
+
+export function {feature}Logic(params: {
+  id?: string;
+  queryParams?: Record<string, unknown>;
+  bodyData?: unknown;
+}): {
+  result: unknown;
+  timestamp: string;
+  processed: boolean;
+} {
+  // Early return for validation
+  if (!params.id) {
+    throw new Error("ID is required");
+  }
+
+  if (params.id.length < 3) {
+    throw new Error("ID must be at least 3 characters");
+  }
+
+  // Call repository
+  const result = {feature}Repository(params);
+
+  // Transform and return business data
+  return {
+    result,
+    timestamp: new Date().toISOString(),
+    processed: true,
+  };
+}
+```
+
+### Repository Pattern
+```typescript
+export function {feature}Repository(params: {
+  id?: string;
+  queryParams?: Record<string, unknown>;
+  bodyData?: unknown;
+}): unknown {
+  // Data access logic
+  // Database queries, external API calls, file operations
+  
+  return {
+    id: params.id,
+    data: "processed data from data source",
+    source: "repository",
+  };
+}
+```
+
+## Response Standards
+
+### Success Response Structure
+```typescript
+{
+  data: any,                    // Main response data
+  request?: {                   // Optional request metadata
+    method: string,
+    url: string,
+    host: string,
+    port: number
+  },
+  message?: string              // Optional success message
+}
+```
+
+### Error Response Structure
+```typescript
+{
+  error: string,                // Error type/category
+  message: string,              // Human-readable error message
+  request?: RequestMetadata     // Optional request context
+}
+```
+
+## Clean Code Principles
+
+### Function Design
+- Keep functions small and focused (single responsibility)
+- Use early returns for validation and error cases
+- Separate pure functions from side effects
+- Minimize parameters by using objects for complex data
+- Use descriptive names starting with verbs
+
+### Error Handling
+- Use `try-catch` at controller level for HTTP errors
+- Use `try-catch` in logic only when adding value
+- Throw descriptive errors in logic and repository layers
+- Log errors for debugging, return generic messages to clients
+
+### Code Organization
+- Place related code together (high cohesion)
+- Hide implementation details (low coupling)
+- Extract complex conditional logic into separate functions
+- Use constants for magic numbers and strings
+
+## Function Preferences
+
+### Declaration Style
+- Prefer `function` declarations over arrow functions
+- Use arrow functions only for callbacks and one-liners
+- Use `async`/`await` for asynchronous operations
+
+### Array Operations
+- Prefer array methods (`map`, `filter`, `reduce`) over `for` loops
+- Use `for...of` when you need to break/continue
+- Use traditional `for` loops only for complex control flow
+
+### Async Patterns
+```typescript
+// Good: async/await with error handling
+export async function getUserLogic({ id }: { id: string }): Promise<UserData> {
+  try {
+    const user = await getUserRepository({ id });
+    return formatUserData(user);
+  } catch (error) {
+    throw new Error(`Failed to get user: ${error.message}`);
+  }
+}
+
+// Good: Concurrent operations
+export async function getUsersWithPostsLogic(): Promise<CombinedData> {
+  const [users, posts] = await Promise.all([
+    getUsersRepository(),
+    getPostsRepository()
+  ]);
+  
+  return combineUsersAndPosts(users, posts);
+}
+```
+
+## Development Principles
+
+### SOLID Principles
+- **Single Responsibility**: Each function/class has one reason to change
+- **Open/Closed**: Open for extension, closed for modification
+- **Liskov Substitution**: Subtypes must be substitutable for base types
+- **Interface Segregation**: Clients shouldn't depend on unused interfaces
+- **Dependency Inversion**: Depend on abstractions, not concretions
+
+### General Guidelines
+- **YAGNI**: You ain't gonna need it (do the minimum)
+- **KISS**: Keep it simple, stupid (simplest solution that works)
+- **DRY**: Don't repeat yourself (reuse code, avoid duplication)
+
+## Project Structure
+
+### API Bootstrap
+- Initialize server in `api.bootstrap.ts`
+- Register routes in `api.routes.ts`
+- Configure middleware for cross-cutting concerns
+
+### Middleware Usage
+- Use middleware for logging, authentication, validation
+- Place middleware in `src/api/middleware/`
+- Register middleware in bootstrap file
+
+### Shared Utilities
+- Place common utilities in `src/api/shared/`
+- Create reusable functions for request handling
+- Export helper functions for data transformation
+
+## Testing Strategy
+
+### Unit Testing
+- Test logic functions independently
+- Mock repository dependencies
+- Test error scenarios and edge cases
+- Use descriptive test names
+
+### Integration Testing
+- Test complete request-response cycles
+- Test with real database connections
+- Verify middleware behavior
+- Test error handling end-to-end
+
+---
+
+This file consolidates all rules for Node.js + Express + TypeScript development in a three-layer architecture, eliminating duplication and providing clear guidance for consistent API development.
