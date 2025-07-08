@@ -1,0 +1,135 @@
+### Portfolio API Tests
+### Base URL for local development
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### ========================================
+### CREATE PORTFOLIO - SUCCESS CASES
+### ========================================
+
+### Create portfolio with valid data
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "email": "john.doe@example.com",
+  "cash": 10000.50
+}
+
+### Create portfolio with zero cash
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "email": "jane.smith@example.com",
+  "cash": 0
+}
+
+### Create portfolio with large cash amount
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "email": "investor@example.com",
+  "cash": 1000000.99
+}
+
+### ========================================
+### CREATE PORTFOLIO - ERROR CASES
+### ========================================
+
+### Missing email
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "cash": 5000
+}
+
+### Missing cash
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com"
+}
+
+### Negative cash amount
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "cash": -100
+}
+
+### Invalid cash type (string instead of number)
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "cash": "5000"
+}
+
+### Empty request body
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{}
+
+### ========================================
+### EDGE CASES
+### ========================================
+
+### Very long email
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "email": "very.long.email.address.that.might.cause.issues@verylongdomainname.com",
+  "cash": 1000
+}
+
+### Special characters in email
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "email": "test+tag@example.com",
+  "cash": 1000
+}
+
+### Decimal cash with many places
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "email": "precision@example.com",
+  "cash": 1234.56789
+}
+
+### ========================================
+### INVALID REQUESTS
+### ========================================
+
+### Wrong HTTP method (GET instead of POST)
+GET {{baseUrl}}/portfolios
+
+### Wrong content type
+POST {{baseUrl}}/portfolios
+Content-Type: text/plain
+
+{
+  "email": "test@example.com",
+  "cash": 1000
+}
+
+### Malformed JSON
+POST {{baseUrl}}/portfolios
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "cash": 1000,
+} 
