@@ -1,0 +1,27 @@
+{
+  "AAPL": {
+    "symbol": "AAPL",
+    "name": "Apple Inc.",
+    "currentPrice": 180.50
+  },
+  "TSLA": {
+    "symbol": "TSLA",
+    "name": "Tesla Inc.",
+    "currentPrice": 245.30
+  },
+  "MSFT": {
+    "symbol": "MSFT",
+    "name": "Microsoft Corporation",
+    "currentPrice": 335.80
+  },
+  "GOOGL": {
+    "symbol": "GOOGL",
+    "name": "Alphabet Inc.",
+    "currentPrice": 140.25
+  },
+  "NVDA": {
+    "symbol": "NVDA",
+    "name": "NVIDIA Corporation",
+    "currentPrice": 495.75
+  }
+}

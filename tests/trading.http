@@ -1,0 +1,112 @@
+### Trading API Tests
+
+@baseUrl = http://localhost:3000
+@portfolioId = 4c1e4d8f-ef87-4568-8264-2cb86ba318ee
+
+### Buy AAPL shares
+POST {{baseUrl}}/trading/buy
+Content-Type: application/json
+
+{
+  "portfolioId": "{{portfolioId}}",
+  "assetSymbol": "AAPL",
+  "quantity": 10,
+  "price": 180.50
+}
+
+### Buy TSLA shares
+POST {{baseUrl}}/trading/buy
+Content-Type: application/json
+
+{
+  "portfolioId": "{{portfolioId}}",
+  "assetSymbol": "TSLA",
+  "quantity": 5,
+  "price": 245.30
+}
+
+### Buy MSFT shares
+POST {{baseUrl}}/trading/buy
+Content-Type: application/json
+
+{
+  "portfolioId": "{{portfolioId}}",
+  "assetSymbol": "MSFT",
+  "quantity": 3,
+  "price": 335.80
+}
+
+### Sell some AAPL shares
+POST {{baseUrl}}/trading/sell
+Content-Type: application/json
+
+{
+  "portfolioId": "{{portfolioId}}",
+  "assetSymbol": "AAPL",
+  "quantity": 2,
+  "price": 185.00
+}
+
+### Try to buy with insufficient cash
+POST {{baseUrl}}/trading/buy
+Content-Type: application/json
+
+{
+  "portfolioId": "{{portfolioId}}",
+  "assetSymbol": "NVDA",
+  "quantity": 100,
+  "price": 495.75
+}
+
+### Try to sell shares we don't own
+POST {{baseUrl}}/trading/sell
+Content-Type: application/json
+
+{
+  "portfolioId": "{{portfolioId}}",
+  "assetSymbol": "GOOGL",
+  "quantity": 5,
+  "price": 140.25
+}
+
+### Try to buy with invalid portfolio ID
+POST {{baseUrl}}/trading/buy
+Content-Type: application/json
+
+{
+  "portfolioId": "invalid-portfolio-id",
+  "assetSymbol": "AAPL",
+  "quantity": 1,
+  "price": 180.50
+}
+
+### Try to buy with missing required fields
+POST {{baseUrl}}/trading/buy
+Content-Type: application/json
+
+{
+  "portfolioId": "{{portfolioId}}",
+  "assetSymbol": "AAPL"
+}
+
+### Try to buy with invalid quantity (negative)
+POST {{baseUrl}}/trading/buy
+Content-Type: application/json
+
+{
+  "portfolioId": "{{portfolioId}}",
+  "assetSymbol": "AAPL",
+  "quantity": -5,
+  "price": 180.50
+}
+
+### Try to buy with invalid price (zero)
+POST {{baseUrl}}/trading/buy
+Content-Type: application/json
+
+{
+  "portfolioId": "{{portfolioId}}",
+  "assetSymbol": "AAPL",
+  "quantity": 5,
+  "price": 0
+}
