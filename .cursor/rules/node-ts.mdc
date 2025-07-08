@@ -21,6 +21,15 @@ import { bootstrap } from "./api/api.bootstrap";
 import { ApiConfig } from "./api/api.bootstrap.ts";
 ```
 
+La ejecución no requiere el uso de ts-node, se puede usar node directamente.
+
+Ejemplo:
+```bash
+# ejecutar con npm
+npm start
+# ejecutar con node
+node src/main.ts
+```
 
 
 

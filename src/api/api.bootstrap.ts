@@ -8,6 +8,10 @@ export type ApiConfig = {
 
 export function bootstrap(config: ApiConfig) {
   const app = express();
+  
+  // Middleware for parsing JSON bodies
+  app.use(express.json());
+  
   app.use(logMiddleware);
 	useApiRoutes(app);
   app.listen(config.port, () => {
