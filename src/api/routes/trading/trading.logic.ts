@@ -64,11 +64,16 @@ export async function buyAssetLogic(
     timestamp: new Date().toISOString(),
   });
 
-  // Update portfolio cash
-  const updatedPortfolio = await updatePortfolioRepository(portfolio.id, {
-    ...portfolio,
-    cash: updatedCash,
-  });
+  // Reload portfolio to include new transaction and update cash
+  const portfolioWithTransactions = await getPortfolioRepository(portfolio.id);
+  if (!portfolioWithTransactions) {
+    throw new Error(`Portfolio ${portfolio.id} no encontrado tras crear transacción`);
+  }
+  portfolioWithTransactions.cash = updatedCash;
+  const updatedPortfolio = await updatePortfolioRepository(
+    portfolio.id,
+    portfolioWithTransactions
+  );
 
   // Get current holdings for total value calculation
   const holdings = await getPortfolioHoldingsRepository(portfolio.id);

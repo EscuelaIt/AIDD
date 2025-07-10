@@ -38,4 +38,5 @@ export type Portfolio = {
   email: string;
   cash: number;
   createdAt: string;
+  transactions: Transaction[];
 };

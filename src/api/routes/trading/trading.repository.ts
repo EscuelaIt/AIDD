@@ -2,9 +2,7 @@ import { randomUUID } from "crypto";
 import { promises as fs } from "fs";
 import { join } from "path";
 import type { Portfolio, TradeRequest, Transaction } from "./trading.types.ts";
-
 const PORTFOLIOS_DATA_PATH = join(process.cwd(), "data", "portfolios");
-const TRANSACTIONS_DATA_PATH = join(process.cwd(), "data", "transactions");
 
 export async function createTransactionRepository(
   tradeData: TradeRequest & { timestamp: string }
@@ -20,15 +18,18 @@ export async function createTransactionRepository(
   };
 
   try {
-    await ensureDirectoryExists(TRANSACTIONS_DATA_PATH);
-
-    const transactionFilePath = join(
-      TRANSACTIONS_DATA_PATH,
-      `${transaction.id}.json`
+    await ensureDirectoryExists(PORTFOLIOS_DATA_PATH);
+    const portfolioFilePath = join(
+      PORTFOLIOS_DATA_PATH,
+      `${transaction.portfolioId}.json`
     );
+    const portfolioData = await fs.readFile(portfolioFilePath, "utf-8");
+    const portfolio = JSON.parse(portfolioData) as Portfolio;
+    portfolio.transactions = portfolio.transactions || [];
+    portfolio.transactions.push(transaction);
     await fs.writeFile(
-      transactionFilePath,
-      JSON.stringify(transaction, null, 2)
+      portfolioFilePath,
+      JSON.stringify(portfolio, null, 2)
     );
 
     return transaction;
@@ -47,7 +48,9 @@ export async function getPortfolioRepository(
   try {
     const portfolioFilePath = join(PORTFOLIOS_DATA_PATH, `${portfolioId}.json`);
     const portfolioData = await fs.readFile(portfolioFilePath, "utf-8");
-    return JSON.parse(portfolioData) as Portfolio;
+    const portfolio = JSON.parse(portfolioData) as Portfolio;
+    portfolio.transactions = portfolio.transactions || [];
+    return portfolio;
   } catch (error) {
     if (error instanceof Error && error.message.includes("ENOENT")) {
       return null;
@@ -84,22 +87,9 @@ export async function getPortfolioHoldingsRepository(
   portfolioId: string
 ): Promise<Array<{ symbol: string; quantity: number; averagePrice: number }>> {
   try {
-    // Read all transaction files
-    const transactionFiles = await fs.readdir(TRANSACTIONS_DATA_PATH);
-    const portfolioTransactions: Transaction[] = [];
-
-    // Filter transactions for this portfolio
-    for (const fileName of transactionFiles) {
-      if (fileName.endsWith(".json")) {
-        const transactionFilePath = join(TRANSACTIONS_DATA_PATH, fileName);
-        const transactionData = await fs.readFile(transactionFilePath, "utf-8");
-        const transaction = JSON.parse(transactionData) as Transaction;
-
-        if (transaction.portfolioId === portfolioId) {
-          portfolioTransactions.push(transaction);
-        }
-      }
-    }
+    const portfolio = await getPortfolioRepository(portfolioId);
+    if (!portfolio) return [];
+    const portfolioTransactions = portfolio.transactions;
 
     // Calculate holdings by symbol
     const holdingsMap = new Map<
@@ -158,20 +148,9 @@ export async function getTransactionsByPortfolioRepository(
   portfolioId: string
 ): Promise<Transaction[]> {
   try {
-    const transactionFiles = await fs.readdir(TRANSACTIONS_DATA_PATH);
-    const portfolioTransactions: Transaction[] = [];
-
-    for (const fileName of transactionFiles) {
-      if (fileName.endsWith(".json")) {
-        const transactionFilePath = join(TRANSACTIONS_DATA_PATH, fileName);
-        const transactionData = await fs.readFile(transactionFilePath, "utf-8");
-        const transaction = JSON.parse(transactionData) as Transaction;
-
-        if (transaction.portfolioId === portfolioId) {
-          portfolioTransactions.push(transaction);
-        }
-      }
-    }
+    const portfolio = await getPortfolioRepository(portfolioId);
+    if (!portfolio) return [];
+    const portfolioTransactions = portfolio.transactions;
 
     // Sort by timestamp (newest first)
     return portfolioTransactions.sort(
