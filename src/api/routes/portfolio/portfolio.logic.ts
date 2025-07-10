@@ -1,4 +1,4 @@
-import { createPortfolioRepository } from "./portfolio.repository.ts";
+import { createPortfolioRepository as defaultCreatePortfolioRepository } from "./portfolio.repository.ts";
 
 export type CreatePortfolioParams = {
   email: string;
@@ -11,6 +11,23 @@ export type Portfolio = {
   cash: number;
   createdAt: string;
 };
+
+// Mutable repository reference for injection
+let createRepo = defaultCreatePortfolioRepository;
+
+/**
+ * Override the default repository function (for testing purposes)
+ */
+export function overrideCreatePortfolioRepository(fn: typeof defaultCreatePortfolioRepository): void {
+  createRepo = fn;
+}
+
+/**
+ * Reset the repository function to default implementation
+ */
+export function resetCreatePortfolioRepository(): void {
+  createRepo = defaultCreatePortfolioRepository;
+}
 
 export async function createPortfolioLogic(params: CreatePortfolioParams): Promise<Portfolio> {
   // Early return for validation
@@ -28,8 +45,8 @@ export async function createPortfolioLogic(params: CreatePortfolioParams): Promi
     throw new Error("Invalid email format");
   }
 
-  // Call repository
-  const result = await createPortfolioRepository(params);
+  // Call repository (injected or default)
+  const result = await createRepo(params);
 
   // Transform and return business data
   return {
@@ -38,4 +55,4 @@ export async function createPortfolioLogic(params: CreatePortfolioParams): Promi
     cash: result.cash,
     createdAt: result.createdAt,
   };
-} 
+}
