@@ -1,6 +1,18 @@
 import type { Request, Response } from "express";
 import { buyAssetLogic, sellAssetLogic } from "./trading.logic.ts";
 
+/**
+ * Realiza una operación de compra de un activo.
+ * @function
+ * @name postBuyController
+ * @route {POST} /trading/buy
+ * @param {import('express').Request} req - Request con los datos de la operación.
+ * @param {import('express').Response} res - Response con la transacción o error.
+ * @returns {Promise<void>}
+ * @example
+ * // Request body: { portfolioId, assetSymbol, quantity, price, type: "buy" }
+ * // Response: { data: { transaction, portfolioUpdated } }
+ */
 export async function postBuyController(
   req: Request,
   res: Response
@@ -94,6 +106,18 @@ export async function postBuyController(
   }
 }
 
+/**
+ * Realiza una operación de venta de un activo.
+ * @function
+ * @name postSellController
+ * @route {POST} /trading/sell
+ * @param {import('express').Request} req - Request con los datos de la operación.
+ * @param {import('express').Response} res - Response con la transacción o error.
+ * @returns {Promise<void>}
+ * @example
+ * // Request body: { portfolioId, assetSymbol, quantity, price, type: "sell" }
+ * // Response: { data: { transaction, portfolioUpdated } }
+ */
 export async function postSellController(
   req: Request,
   res: Response

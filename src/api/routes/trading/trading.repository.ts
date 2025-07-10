@@ -4,6 +4,12 @@ import { join } from "path";
 import type { Portfolio, TradeRequest, Transaction } from "./trading.types.ts";
 const PORTFOLIOS_DATA_PATH = join(process.cwd(), "data", "portfolios");
 
+/**
+ * Crea y persiste una transacción de trading en el portafolio correspondiente.
+ * @param {TradeRequest & { timestamp: string }} tradeData - Datos de la transacción.
+ * @returns {Promise<Transaction>} Transacción creada y persistida.
+ * @throws {Error} Si ocurre un error de persistencia.
+ */
 export async function createTransactionRepository(
   tradeData: TradeRequest & { timestamp: string }
 ): Promise<Transaction> {
