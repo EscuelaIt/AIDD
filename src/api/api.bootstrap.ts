@@ -1,11 +1,23 @@
 import express from "express";
-import { logMiddleware } from "./middleware/log.middleware.ts";
 import { useApiRoutes } from "./api.routes.ts";
+import { logMiddleware } from "./middleware/log.middleware.ts";
 
+/**
+ * Configuración de la API principal.
+ * @typedef {Object} ApiConfig
+ * @property {number} port - Puerto en el que se inicia el servidor.
+ */
 export type ApiConfig = {
   port: number;
 };
 
+/**
+ * Inicializa el servidor Express, configura middlewares y registra rutas.
+ * @param {ApiConfig} config - Configuración de la API.
+ * @returns {void}
+ * @example
+ * bootstrap({ port: 3000 });
+ */
 export function bootstrap(config: ApiConfig) {
   const app = express();
   

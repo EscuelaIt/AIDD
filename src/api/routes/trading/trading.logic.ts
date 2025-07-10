@@ -1,13 +1,19 @@
 import {
-  createTransactionRepository,
-  getPortfolioHoldingsRepository,
-  getPortfolioRepository,
-  updatePortfolioRepository,
+    createTransactionRepository,
+    getPortfolioHoldingsRepository,
+    getPortfolioRepository,
+    updatePortfolioRepository,
 } from "./trading.repository.ts";
 import type { TradeRequest, TradeResponse } from "./trading.types.ts";
 
 const MINIMUM_CASH_THRESHOLD = 0;
 
+/**
+ * Lógica de negocio para comprar un activo.
+ * @param {TradeRequest} tradeRequest - Datos de la operación de compra.
+ * @returns {Promise<TradeResponse>} Resultado de la operación.
+ * @throws {Error} Si los parámetros son inválidos o el portafolio no existe.
+ */
 export async function buyAssetLogic(
   tradeRequest: TradeRequest
 ): Promise<TradeResponse> {
@@ -64,11 +70,16 @@ export async function buyAssetLogic(
     timestamp: new Date().toISOString(),
   });
 
-  // Update portfolio cash
-  const updatedPortfolio = await updatePortfolioRepository(portfolio.id, {
-    ...portfolio,
-    cash: updatedCash,
-  });
+  // Reload portfolio to include new transaction and update cash
+  const portfolioWithTransactions = await getPortfolioRepository(portfolio.id);
+  if (!portfolioWithTransactions) {
+    throw new Error(`Portfolio ${portfolio.id} no encontrado tras crear transacción`);
+  }
+  portfolioWithTransactions.cash = updatedCash;
+  const updatedPortfolio = await updatePortfolioRepository(
+    portfolio.id,
+    portfolioWithTransactions
+  );
 
   // Get current holdings for total value calculation
   const holdings = await getPortfolioHoldingsRepository(portfolio.id);
@@ -87,6 +98,12 @@ export async function buyAssetLogic(
   };
 }
 
+/**
+ * Lógica de negocio para vender un activo.
+ * @param {TradeRequest} tradeRequest - Datos de la operación de venta.
+ * @returns {Promise<TradeResponse>} Resultado de la operación.
+ * @throws {Error} Si los parámetros son inválidos o el portafolio no existe.
+ */
 export async function sellAssetLogic(
   tradeRequest: TradeRequest
 ): Promise<TradeResponse> {

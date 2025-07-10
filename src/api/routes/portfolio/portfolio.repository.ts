@@ -1,12 +1,26 @@
+import { randomUUID } from "crypto";
 import { promises as fs } from "fs";
 import { join } from "path";
-import { randomUUID } from "crypto";
 
+/**
+ * Parámetros para el repositorio de creación de portafolios.
+ * @typedef {Object} CreatePortfolioRepositoryParams
+ * @property {string} email - Email del usuario.
+ * @property {number} cash - Saldo inicial.
+ */
 export type CreatePortfolioRepositoryParams = {
   email: string;
   cash: number;
 };
 
+/**
+ * Datos persistidos de un portafolio.
+ * @typedef {Object} PortfolioData
+ * @property {string} id - Identificador único.
+ * @property {string} email - Email del usuario.
+ * @property {number} cash - Saldo disponible.
+ * @property {string} createdAt - Fecha de creación ISO.
+ */
 export type PortfolioData = {
   id: string;
   email: string;
@@ -14,6 +28,12 @@ export type PortfolioData = {
   createdAt: string;
 };
 
+/**
+ * Crea y persiste un portafolio en el sistema de archivos.
+ * @param {CreatePortfolioRepositoryParams} params - Parámetros de entrada.
+ * @returns {Promise<PortfolioData>} Portafolio persistido.
+ * @throws {Error} Si ocurre un error de persistencia.
+ */
 const PORTFOLIOS_DIR = join(process.cwd(), "data", "portfolios");
 
 export async function createPortfolioRepository(params: CreatePortfolioRepositoryParams): Promise<PortfolioData> {
@@ -46,4 +66,4 @@ async function ensurePortfoliosDirectory(): Promise<void> {
     console.error("Error creating portfolios directory:", error);
     throw new Error("Failed to create portfolios directory");
   }
-} 
+}

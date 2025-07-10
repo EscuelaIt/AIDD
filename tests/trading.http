@@ -32,8 +32,8 @@ Content-Type: application/json
 {
   "portfolioId": "{{portfolioId}}",
   "assetSymbol": "MSFT",
-  "quantity": 3,
-  "price": 335.80
+  "quantity": 1,
+  "price": 33.80
 }
 
 ### Sell some AAPL shares

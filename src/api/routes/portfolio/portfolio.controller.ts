@@ -1,6 +1,18 @@
 import type { Request, Response } from "express";
 import { createPortfolioLogic } from "./portfolio.logic.ts";
 
+/**
+ * Crea un nuevo portafolio.
+ * @function
+ * @name postPortfolioController
+ * @route {POST} /portfolios
+ * @param {import('express').Request} req - Request con email y cash en el body.
+ * @param {import('express').Response} res - Response con el portafolio creado o error.
+ * @returns {Promise<void>}
+ * @example
+ * // Request body: { email: "user@mail.com", cash: 1000 }
+ * // Response: { data: { id, email, cash, createdAt }, request: {...} }
+ */
 export async function postPortfolioController(req: Request, res: Response): Promise<void> {
   try {
     const { email, cash } = req.body;
@@ -38,4 +50,4 @@ export async function postPortfolioController(req: Request, res: Response): Prom
       message: error instanceof Error ? error.message : "Unknown error",
     });
   }
-} 
+}
